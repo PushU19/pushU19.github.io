@@ -28,12 +28,17 @@
 	}
 
 	function showRatings(imdb, kinopoisk) {
-		$(".full-start-new__title").after(
-        `<div class="cm_ratings" style="margin-bottom:27px; display:flex; gap:15px;">
-			<div style="border-radius:5px; background-color:#155f91; padding:10px">IMDB: ${imdb}</div>
-			<div style="border-radius:5px; background-color:#911591; padding:10px">Kinopoisk: ${kinopoisk}</div>
-		</div>`
-      );
+		let ratingElem = `<div class="cm_ratings" style="margin-bottom:27px; display:flex; gap:15px;">`;
+
+		if (imdb) {
+			ratingElem += `<div style="border-radius:5px; background-color:#155f91; padding:10px">IMDB: ${imdb}</div>`
+		}
+
+		if (kinopoisk) {
+			ratingElem += `<div style="border-radius:5px; background-color:#911591; padding:10px">Kinopoisk: ${kinopoisk}</div>`
+		}
+
+		$(".full-start-new__title").after(ratingElem + `</div>`);
 	}
 
 	function additionalLogic(key, show) {
