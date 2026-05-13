@@ -71,7 +71,7 @@
 				break;
 			case 'cm_ratings': 
 				if (show) {
-					showRatings(fullData.data.movie.imdb_rating, fullData.data.movie.kp_rating);
+					showRatings(fullData?.data?.movie?.imdb_rating, fullData?.data?.movie?.kp_rating);
 					return;
 				}
 
