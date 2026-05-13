@@ -29,7 +29,10 @@
 
 	function showRatings(imdb, kinopoisk) {
 		$(".full-start-new__title").after(
-        `<div class="cm_ratings" style="margin-bottom:27px;"><div>IMDB: ${imdb}</div><div>Kinopoisk: ${kinopoisk}</div></div>`
+        `<div class="cm_ratings" style="margin-bottom:27px; display:flex; gap:15px;">
+			<div style="border-radius:5px; background-color:#155f91; padding:10px">IMDB: ${imdb}</div>
+			<div style="border-radius:5px; background-color:#911591; padding:10px">Kinopoisk: ${kinopoisk}</div>
+		</div>`
       );
 	}
 
