@@ -104,14 +104,14 @@
           page: 1
         };
         console.log(PLUGIN_ID, 'push_online_activity', params);
+        this.searchSource('veoveo', card.title)
         Lampa.Activity.push(params);
+        console.log(PLUGIN_ID, 'finished')
       } catch (e) {
         console.log(PLUGIN_ID, 'push_online_error', e);
         // fallback: open hdrezka search in browser
         if (window && window.open) window.open(urls.hdrezka, '_blank');
       }
-
-      this.searchSource('veoveo', card.title)
 
         // Also attempt to fetch playable sources from both balansers and offer direct play
         /*var self = this;
