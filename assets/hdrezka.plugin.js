@@ -38,6 +38,7 @@
               console.log(PLUGIN_ID, 'activity_render', activity);
               if (!activity || activity.find('.view--hdrezka_online').length) return;
 
+              var card = HdrezkaPlugin.getActiveCard();
               var ico = '<svg class="hd-online-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M17 14.5 21.2 10 4.9 1.2z" fill="currentColor"/></svg>';
               var btnHtml = "<div style='position:relative' class='full-start__button selector view--hdrezka_online'>" + ico + "<span>Play</span></div>";
 
@@ -49,7 +50,7 @@
               var btnEl = activity.find('.view--hdrezka_online');
               console.log(PLUGIN_ID, 'inject_button', { inserted: !!btnEl.length });
               btnEl.on('hover:enter', function () {
-                var c = e.movie;
+                var c = HdrezkaPlugin.getActiveCard(e);
                 console.log(PLUGIN_ID, 'play_button_clicked', { card: c });
                 if (c) HdrezkaPlugin.searchCard(c);
                 else Lampa.Noty.show('Фильмы не найдены');
@@ -68,6 +69,25 @@
         "veoveo": "VeoVeo (veoveo.ru)",
         "samplebal": "SampleBalancer"
       };
+    },
+
+    // Try to find currently opened card in activity
+    getActiveCard: function (e = null) {
+        if (e) { return e.movie; }
+
+      try {
+        var act = Lampa.Activity.active();
+        if (!act) return null;
+        var comp = act.activity && act.activity.component;
+        if (comp) {
+          if (comp.movie) return comp.movie;
+          if (comp.card) return comp.card;
+          if (comp.params && comp.params.movie) return comp.params.movie;
+        }
+        // Fallback to global card variable if present (used by some plugins)
+        if (window.cards) return window.cards;
+      } catch (e) {}
+      return null;
     },
 
     // Build search URLs for balansers and present options to user
