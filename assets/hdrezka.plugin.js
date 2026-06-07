@@ -100,30 +100,108 @@
         veoveo: 'https://veoveo.ru/search.php?q=' + q
       };
 
-      var items = [];
-      items.push({ title: '🔎 Search HDRezka', subtitle: urls.hdrezka, url: urls.hdrezka });
-      items.push({ title: '🔎 Search VeoVeo', subtitle: urls.veoveo, url: urls.veoveo });
-      items.push({ title: '🌐 Open HDRezka in browser', subtitle: urls.hdrezka, url: urls.hdrezka });
-      items.push({ title: '🌐 Open VeoVeo in browser', subtitle: urls.veoveo, url: urls.veoveo });
+      // Instead of showing a small select, open the online activity so user sees balancers selector (like modss.tv.js)
+      try {
+        var params = {
+          url: '',
+          title: NAME + ' - Online',
+          component: PLUGIN_ID,
+          search: title,
+          search_one: title,
+          search_two: card.original_title || card.original_name || '',
+          movie: card,
+          page: 1
+        };
+        console.log(PLUGIN_ID, 'push_online_activity', params);
+        Lampa.Activity.push(params);
+      } catch (e) {
+        console.log(PLUGIN_ID, 'push_online_error', e);
+        // fallback: open hdrezka search in browser
+        if (window && window.open) window.open(urls.hdrezka, '_blank');
+      }
 
-      Lampa.Select.show({
-        title: 'Search on balancers',
-        items: items,
-        onBack: function () {
-          Lampa.Select.hide();
-          Lampa.Controller.toggle('content');
-        },
-        onSelect: function (it) {
-          Lampa.Select.hide();
-          // Open in external browser/tab
-          if (it && it.url) {
-            try {
-              // Attempt to open in Lampa browser if available
-              if (window && window.open) window.open(it.url, '_blank');
-            } catch (e) { }
+        // Also attempt to fetch playable sources from both balansers and offer direct play
+        var self = this;
+        var fetches = Object.keys(urls).map(function (k) {
+          return self.fetchSourcesFromBalancer(k, urls[k], card);
+        });
+
+        Promise.all(fetches).then(function (results) {
+          var all = [];
+          results.forEach(function (r) {
+            if (r && r.length) all = all.concat(r);
+          });
+          if (all.length) {
+            var items = all.map(function (s) {
+              return {
+                title: s.title || s.url,
+                subtitle: s.source || s.url,
+                play: s
+              };
+            });
+            Lampa.Select.show({
+              title: 'Found sources',
+              items: items,
+              onBack: function () {
+                Lampa.Select.hide();
+                Lampa.Controller.toggle('content');
+              },
+              onSelect: function (it) {
+                Lampa.Select.hide();
+                try {
+                  var play = {
+                    title: card.title || card.name,
+                    url: it.play.url,
+                    thumbnail: card.poster_path || card.poster,
+                    subtitles: it.play.subtitles || []
+                  };
+                  console.log(PLUGIN_ID, 'play_selected', play);
+                  Lampa.Player.play(play);
+                } catch (e) {
+                  console.log(PLUGIN_ID, 'play_error', e);
+                  if (window && window.open) window.open(it.play.url, '_blank');
+                }
+              }
+            });
+          } else {
+            console.log(PLUGIN_ID, 'no_sources_found', { movie: card, urls: urls });
           }
-        }
-      });
+        })["catch"](function (e) {
+          console.log(PLUGIN_ID, 'fetch_sources_error', e);
+        });
+    },
+
+    // Fetch and parse pages for direct video links
+    fetchSourcesFromBalancer: function (name, url, card) {
+        return new Promise(function (resolve) {
+          try {
+            var network = new Lampa.Reguest();
+            network.timeout(10000);
+            network["native"](url, function (html) {
+              try {
+                var found = [];
+                // find direct video links (.m3u8, .mp4)
+                var re = /https?:\/\/[^\"'\s<>]+?(?:m3u8|mp4)(?:[^\"'\s<>]*)/ig;
+                var m;
+                while ((m = re.exec(html)) !== null) {
+                  found.push({ url: m[0], source: name, title: card.title });
+                }
+                // also try <video src>
+                var vRe = /<video[^>]+src=["']([^"']+)["']/ig;
+                while ((m = vRe.exec(html)) !== null) {
+                  found.push({ url: m[1], source: name, title: card.title });
+                }
+                // remove duplicates
+                var uniq = [];
+                var map = {};
+                found.forEach(function (f) {
+                  if (!map[f.url]) { map[f.url] = true; uniq.push(f); }
+                });
+                resolve(uniq);
+              } catch (e) { resolve([]); }
+            }, function () { resolve([]); }, false, { dataType: 'html' });
+          } catch (e) { resolve([]); }
+        });
     }
   };
 
