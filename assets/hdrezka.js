@@ -1,7 +1,7 @@
 // HDRezka plugin for Lampa.mx
 // Simple search + source extraction (falls back to browser fetch)
 
-const HD_HOST = 'https://hdrezka.org';
+const HD_HOST = 'https://hdrezka.co';
 
 async function hd_fetchText(url, opts = {}) {
   if (typeof Lampa !== 'undefined' && typeof Lampa.Reguest === 'function') {
@@ -37,7 +37,7 @@ function hd_uniq(arr) { return Array.from(new Set(arr)); }
 async function hd_searchByName(name) {
   const q = encodeURIComponent(name);
   // HDRezka supports a search endpoint; try common pattern
-  const url = `${HD_HOST}/index.php?do=search&subaction=search&story=${q}`;
+  const url = `${HD_HOST}/search/?do=search&subaction=search&q=${q}`;
   const html = await hd_fetchText(url);
 
   const re = /<a[^>]+href=["']([^"']+)["'][^>]*>([^<]+)<\/a>/gi;
