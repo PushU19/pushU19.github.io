@@ -106,7 +106,7 @@ async function resolveMovieByName(name) {
   return null;
 }
 
-(function(exports){
+/*(function(exports){
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = exports;
   } else if (typeof define === 'function' && define.amd) {
@@ -145,7 +145,7 @@ async function resolveMovieByName(name) {
       done([]);
     }
   }
-});
+});*/
 
 // Start plugin behaviour similar to other Lampa plugins (capture full card data)
 (function(){
@@ -154,11 +154,15 @@ async function resolveMovieByName(name) {
   function startPlugin() {
     if (typeof Lampa === 'undefined' || !Lampa.Listener) return;
 
-    Lampa.Listener.follow('full', function (e) {
+    Lampa.Listener.follow('full', async function (e) {
       if (e.type == 'complite') {
         fullData = e;
         try { window.lordfilm_full = fullData; } catch (err) {}
         console.log('[Lordfilm] full card data captured', e);
+
+        const found = await resolveMovieByName(e.data.movie.title);
+        
+        console.log('[Lordfilm] resolved sources', found);
       }
     });
 
