@@ -15,6 +15,7 @@ function uniq(arr) {
 }
 
 async function searchByName(name) {
+  console.log(`[Lordfilm] Searching for "${name}"...`);
   const q = encodeURIComponent(name);
   const url = `${HOST}/index.php?do=search&subaction=search&story=${q}`;
   const html = await fetchText(url);
@@ -98,6 +99,7 @@ async function resolveMovieByName(name) {
       const sources = extractSourcesFromHtml(page);
       if (sources.length) return {link, sources};
     } catch (e) {
+      console.error('[Lordfilm] Error occurred while resolving movie:', e);
       // continue to next
     }
   }
