@@ -42,33 +42,13 @@
 
               var card = HdrezkaPlugin.getActiveCard();
               var ico = '<svg class="hd-online-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M17 14.5 21.2 10 4.9 1.2z" fill="currentColor"/></svg>';
-              var subtitle = 'hdrezka_plugin';
-              var button = "<div style='position:relative' data-subtitle='".concat(subtitle, "' class='full-start__button selector view--hdrezka_online'>") + ico + "<span>HDRezka / VeoVeo</span></div>";
-              var btn = $(Lampa.Lang.translate(button));
+              var btnHtml = "<div style='position:relative' class='full-start__button selector view--hdrezka_online'>" + ico + "<span>HDRezka / VeoVeo</span></div>";
 
-              var enabled = Lampa.Controller.enabled().name;
-              var addButtonAndToggle = function (b) {
-                Lampa.Controller.toggle(enabled);
-                try { Navigator.focus(b[0]); } catch (e) {}
-              };
-
-              if (activity.find('.button--priority').length) {
-                if (Lampa.Storage.field('online_but_first')) {
-                  activity.find('.full-start-new__buttons').prepend(btn);
-                  addButtonAndToggle(btn);
-                } else {
-                  activity.find('.view--torrent').after(btn);
-                }
-              } else if ((Lampa.Storage.field('online_but_first') && activity.find('.button--play').length) || !activity.find('.view--torrent').length) {
-                if (activity.find('.full-start__button').length && !activity.find('.view--hdrezka_online').length) {
-                  activity.find('.full-start__button').first().before(btn);
-                } else {
-                  activity.find('.button--play').before(btn);
-                }
-                addButtonAndToggle(btn);
-              } else {
-                activity.find('.view--torrent').before(btn);
-              }
+              // Prefer existing button container
+              if (activity.find('.full-start-new__buttons').length) {
+                console.log(PLUGIN_ID, 'inject_button_into', {el: activity.find('.full-start-new__buttons')});
+                activity.find('.full-start-new__buttons').prepend($(btnHtml));
+              } 
 
               var btnEl = activity.find('.view--hdrezka_online');
               console.log(PLUGIN_ID, 'inject_button', { inserted: !!btnEl.length });
