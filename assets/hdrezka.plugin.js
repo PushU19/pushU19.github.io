@@ -47,7 +47,7 @@
               } 
 
               var btnEl = activity.find('.view--hdrezka_online');
-              console.log(PLUGIN_ID, 'inject_button', { inserted: !!btnEl.length });
+              console.log(PLUGIN_ID, 'inject_button', { inserted: !!btnEl.length, e });
               btnEl.on('hover:enter', function () {
                 var c = HdrezkaPlugin.getActiveCard(e);
                 console.log(PLUGIN_ID, 'play_button_clicked', { card: c });
