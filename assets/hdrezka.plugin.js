@@ -171,13 +171,13 @@
             case 'veoveo':
                 const token = 'b491a97893498a3bec2a6cff3f891c5f';
                 const page = await this.fetchHTML('https://veoveo.ru/search.php?q=' + encodeURIComponent(title.trim()));
-
+                console.log(PLUGIN_ID, 'parsed_Page', page)
                 if (page) {
                     // Try to find first search result URL
                     const data = [];
                     const dom = new DOMParser().parseFromString(page, 'text/html');
                     const items = dom.querySelectorAll('article');
-                    
+                    console.log(PLUGIN_ID, 'items', items)
                     for (let item of items) {
                         const cardLink = item.querySelector('a')?.href ?? '';
 
