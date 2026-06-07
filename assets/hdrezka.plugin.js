@@ -3,30 +3,41 @@
   if (window.__hdrezkaPluginOnce) return;
   window.__hdrezkaPluginOnce = true;
 
+  const PLUGIN_ID = 'hdrezka_plugin';
+  const PLUGIN_TITLE = 'HDRezka Plugin';
+  const PLUGIN_ICON = '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M3 3h18v18H3z"/></svg>';
+  const STORAGE_KEY = 'hdrezka_plugin';
+  const NAME = 'HDRezka';
+
   var HdrezkaPlugin = {
     init: function () {
+      console.log(PLUGIN_ID, 'init');
       try {
         if (typeof Lampa === 'undefined' || !Lampa.Menu) return;
 
         // Add a simple menu button (visible when storage flag enabled)
-        if (Lampa.Storage.get('hdrezka_plugin')) {
-          var icon = '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M3 3h18v18H3z"/></svg>';
-          var btn = Lampa.Menu.addButton(icon, 'HDRezka Plugin', function () {
+        if (Lampa.Storage.get(STORAGE_KEY)) {
+          console.log(PLUGIN_ID, 'adding_menu_button', { storage: Lampa.Storage.get(STORAGE_KEY) });
+          var icon = PLUGIN_ICON;
+          var btn = Lampa.Menu.addButton(icon, PLUGIN_TITLE, function () {
             // Try to search current opened card, otherwise open plugin activity
             var card = HdrezkaPlugin.getActiveCard();
+            console.log(PLUGIN_ID, 'menu_button_clicked', { hasCard: !!card, card: card });
             if (card) HdrezkaPlugin.searchCard(card);
-            else Lampa.Activity.push({ url: '', title: 'HDRezka', component: 'hdrezka_plugin', page: 1 });
+            else Lampa.Activity.push({ url: '', title: NAME, component: PLUGIN_ID, page: 1 });
           });
-          btn.addClass('hdrezka_plugin');
+          btn.addClass(PLUGIN_ID);
         }
 
         // Inject play button into full film card when opened
         Lampa.Listener.follow('activity', function (e) {
           if (e.component !== 'full') return;
           if (e.type !== 'create' && e.type !== 'start') return;
+    
           setTimeout(function () {
             try {
               var activity = Lampa.Activity.active().activity.render();
+              console.log(PLUGIN_ID, 'activity_render', activity);
               if (!activity || activity.find('.view--hdrezka_online').length) return;
 
               var card = HdrezkaPlugin.getActiveCard();
@@ -43,8 +54,10 @@
               }
 
               var btnEl = activity.find('.view--hdrezka_online');
+              console.log(PLUGIN_ID, 'inject_button', { inserted: !!btnEl.length });
               btnEl.on('hover:enter', function () {
                 var c = HdrezkaPlugin.getActiveCard() || card;
+                console.log(PLUGIN_ID, 'play_button_clicked', { card: c });
                 if (c) HdrezkaPlugin.searchCard(c);
                 else Lampa.Noty.show('No card data');
               });
