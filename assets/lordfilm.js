@@ -47,7 +47,7 @@ async function searchByName(name) {
       candidates.push({href, text: name});
     }
   }
-
+  console.log('[Lordfilm]', candidates)
   return candidates.map(c => c.href);
 }
 
