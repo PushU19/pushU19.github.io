@@ -38,7 +38,6 @@
               console.log(PLUGIN_ID, 'activity_render', activity);
               if (!activity || activity.find('.view--hdrezka_online').length) return;
 
-              var card = HdrezkaPlugin.getActiveCard();
               var ico = '<svg class="hd-online-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M17 14.5 21.2 10 4.9 1.2z" fill="currentColor"/></svg>';
               var btnHtml = "<div style='position:relative' class='full-start__button selector view--hdrezka_online'>" + ico + "<span>Play</span></div>";
 
