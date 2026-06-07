@@ -40,11 +40,10 @@
 
               var card = HdrezkaPlugin.getActiveCard();
               var ico = '<svg class="hd-online-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M17 14.5 21.2 10 4.9 1.2z" fill="currentColor"/></svg>';
-              var btnHtml = "<div style='position:relative' class='full-start__button selector view--hdrezka_online'>" + ico + "<span>HDRezka / VeoVeo</span></div>";
-                console.log(PLUGIN_ID, 'inject_button_into', {el: activity.find('.full-start-new__buttons')});
+              var btnHtml = "<div style='position:relative' class='full-start__button selector view--hdrezka_online'>" + ico + "<span>Play</span></div>";
+
               // Prefer existing button container
               if (activity.find('.full-start-new__buttons').length) {
-                
                 activity.find('.full-start-new__buttons').prepend($(btnHtml));
               } 
 
@@ -54,7 +53,7 @@
                 var c = HdrezkaPlugin.getActiveCard() || card;
                 console.log(PLUGIN_ID, 'play_button_clicked', { card: c });
                 if (c) HdrezkaPlugin.searchCard(c);
-                else Lampa.Noty.show('No card data');
+                else Lampa.Noty.show('Фильмы не найдены');
               });
             } catch (ee) {}
           //}, 350);
@@ -95,8 +94,8 @@
       var title = card.title || card.name || card.original_title || card.original_name || '';
       var q = encodeURIComponent(title.trim());
       var urls = {
-        hdrezka: 'https://hdrezka.ag/search/?q=' + q,
-        veoveo: 'https://veoveo.ru/?s=' + q
+        hdrezka: 'https://hdrezka.co/search/?do=search&subaction=search&q=' + q,
+        veoveo: 'https://veoveo.ru/search.php?q=' + q
       };
 
       var items = [];
