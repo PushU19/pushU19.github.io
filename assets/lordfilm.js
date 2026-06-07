@@ -146,3 +146,50 @@ async function resolveMovieByName(name) {
     }
   }
 });
+
+// Start plugin behaviour similar to other Lampa plugins (capture full card data)
+(function(){
+  var fullData = {};
+
+  function startPlugin() {
+    if (typeof Lampa === 'undefined' || !Lampa.Listener) return;
+
+    Lampa.Listener.follow('full', function (e) {
+      if (e.type == 'complite') {
+        fullData = e;
+        try { window.lordfilm_full = fullData; } catch (err) {}
+        console.log('[Lordfilm] full card data captured', e);
+      }
+    });
+
+    // expose getter on the exported object when available
+    try {
+      if (window && window.lordfilm) window.lordfilm.getFullData = function(){ return fullData; };
+    } catch (e) {}
+
+    // add a simple setting to toggle plugin (optional)
+    try {
+      if (Lampa.SettingsApi && Lampa.SettingsApi.addParam) {
+        Lampa.SettingsApi.addParam({
+          component: 'card_mod',
+          param: { name: 'enable_lordfilm', type: 'trigger', "default": true },
+          field: { name: 'Enable LordFilm plugin' }
+        });
+      }
+    } catch (e) {}
+  }
+
+  if (window && window.appready) {
+    startPlugin();
+  } else if (typeof Lampa !== 'undefined' && Lampa.Listener) {
+    // If Lampa is already available
+    startPlugin();
+  } else if (typeof Lampa !== 'undefined') {
+    Lampa.Listener.follow('app', function (ev) {
+      if (ev.type == 'ready') startPlugin();
+    });
+  } else {
+    // fallback: try on DOMContentLoaded
+    if (document && document.addEventListener) document.addEventListener('DOMContentLoaded', startPlugin);
+  }
+})();
