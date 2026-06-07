@@ -61,15 +61,6 @@
       } catch (e) {}
     },
 
-    // Return available balansers — include hdrezka and veoveo
-    balansers: function () {
-      return {
-        "hdrezka": "HDRezka  <span style=\"font-weight:700;color:rgb(236,151,31)\">VIP</span>",
-        "veoveo": "VeoVeo (veoveo.ru)",
-        "samplebal": "SampleBalancer"
-      };
-    },
-
     // Try to find currently opened card in activity
     getActiveCard: function (e = null) {
         if (e) { return e.movie; }
@@ -96,7 +87,7 @@
       var title = card.title || card.name || card.original_title || card.original_name || '';
       var q = encodeURIComponent(title.trim());
       var urls = {
-        hdrezka: 'https://hdrezka.co/search/?do=search&subaction=search&q=' + q,
+        //hdrezka: 'https://hdrezka.co/search/?do=search&subaction=search&q=' + q,
         veoveo: 'https://veoveo.ru/search.php?q=' + q
       };
 
@@ -168,6 +159,59 @@
           }
         })["catch"](function (e) {
           console.log(PLUGIN_ID, 'fetch_sources_error', e);
+        });
+    },
+
+    searchSource: async function (balanser, title) {
+        switch (balanser) {
+            case 'hdrezka':
+                return 'https://hdrezka.co/search/?do=search&subaction=search&q=' + encodeURIComponent(title.trim());
+            case 'veoveo':
+                const token = 'b491a97893498a3bec2a6cff3f891c5f';
+                const page = await this.fetchHTML('https://veoveo.ru/search.php?q=' + encodeURIComponent(title.trim()));
+
+                if (page) {
+                    // Try to find first search result URL
+                    const data = [];
+                    const dom = new DOMParser().parseFromString(page, 'text/html');
+                    const items = dom.querySelectorAll('article');
+                    
+                    for (let item of items) {
+                        const cardLink = item.querySelector('a')?.href ?? '';
+
+                        if (cardLink) {
+                            const cardPage = await this.fetchHTML(cardLink);
+                            const cardDom = new DOMParser().parseFromString(cardPage, 'text/html');
+                            const iframe = cardDom.querySelector('.movie-player iframe');
+                            console.log(PLUGIN_ID, 'data', {iframe, iv: iframe.contentDocumennt?.querySelector('video')})
+                            data.push({
+                                title: item.querySelector('.card-title')?.textContent ?? '',
+                                card_url: item.querySelector('a')?.href ?? '',
+                                iframe: iframe.src
+                            });
+                        }
+                    }
+
+                    return data;
+                }
+
+                return null;
+            default:
+                return null;
+        }
+    },
+
+    fetchHTML: function (url) {
+        return new Promise(function (resolve, reject) {
+          try {
+            var network = new Lampa.Reguest();
+            network.timeout(10000);
+            network["native"](url, function (html) {
+              try {
+                resolve(html);
+              } catch (e) { reject(e); }
+            });
+          } catch (e) { reject(e); }
         });
     },
 
