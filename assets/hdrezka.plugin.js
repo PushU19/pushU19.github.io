@@ -209,11 +209,12 @@
             var network = new Lampa.Reguest();
             network.timeout(10000);
             network["native"](url, function (html) {
+                console.log(PLUGIN_ID, html)
               try {
                 resolve(html);
-              } catch (e) { reject(e); }
+              } catch (e) { console.log(PLUGIN_ID, e); reject(e); }
             });
-          } catch (e) { reject(e); }
+          } catch (e) { console.log(PLUGIN_ID, e); reject(e); }
         });
     },
 
