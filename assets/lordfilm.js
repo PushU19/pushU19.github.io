@@ -15,7 +15,7 @@ function uniq(arr) {
 }
 
 async function searchByName(name) {
-  console.log(`[Lordfilm] Searching for "${name}"...`);
+  console.log('Lordfilm', `Searching for "${name}"...`);
   const q = encodeURIComponent(name);
   const url = `${HOST}/index.php?do=search&subaction=search&story=${q}`;
   const html = await fetchText(url);
@@ -48,7 +48,7 @@ async function searchByName(name) {
       candidates.push({href, text: name});
     }
   }
-  console.log('[Lordfilm]', candidates)
+  console.log('Lordfilm', 'candidates', candidates);
   return candidates.map(c => c.href);
 }
 
@@ -99,7 +99,7 @@ async function resolveMovieByName(name) {
       const sources = extractSourcesFromHtml(page);
       if (sources.length) return {link, sources};
     } catch (e) {
-      console.error('[Lordfilm] Error occurred while resolving movie:', e);
+      console.error('Lordfilm', 'Error occurred while resolving movie:', e);
       // continue to next
     }
   }
@@ -158,11 +158,11 @@ async function resolveMovieByName(name) {
       if (e.type == 'complite') {
         fullData = e;
         try { window.lordfilm_full = fullData; } catch (err) {}
-        console.log('[Lordfilm] full card data captured', e);
+        console.log('Lordfilm', 'full card data captured', e);
 
         const found = await resolveMovieByName(e.data.movie.title);
         
-        console.log('[Lordfilm] resolved sources', found);
+        console.log('Lordfilm', 'found links', found);
       }
     });
 
