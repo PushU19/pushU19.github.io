@@ -104,7 +104,20 @@ async function resolveMovieByName(name) {
   return null;
 }
 
-module.exports = {
+(function(exports){
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = exports;
+  } else if (typeof define === 'function' && define.amd) {
+    define(function(){ return exports; });
+  } else if (typeof window !== 'undefined') {
+    window.lordfilm = exports;
+    if (window.lampa && typeof window.lampa.addPlugin === 'function') {
+      try { window.lampa.addPlugin(exports); } catch(e) {}
+    }
+  } else if (typeof globalThis !== 'undefined') {
+    globalThis.lordfilm = exports;
+  }
+})({
   id: 'lordfilm',
   title: 'LordFilm (vo.lordfilm135.ru)',
   version: '1.0',
@@ -130,4 +143,4 @@ module.exports = {
       done([]);
     }
   }
-};
+});
