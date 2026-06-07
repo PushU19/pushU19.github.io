@@ -5,6 +5,33 @@
 const HOST = 'https://vo.lordfilm135.ru';
 
 async function fetchText(url, opts = {}) {
+  // Prefer Lampa native request (bypasses CORS in host app) when available
+  if (typeof Lampa !== 'undefined' && typeof Lampa.Reguest === 'function') {
+    return await new Promise((resolve, reject) => {
+      try {
+        const net = new Lampa.Reguest();
+        if (net.clear) net.clear();
+        if (net.timeout) net.timeout(opts.timeout || 15000);
+        net.silent(url, function(res) {
+          // `silent` may return parsed JSON or raw text
+          if (typeof res === 'string') return resolve(res);
+          if (res && typeof res === 'object') {
+            // try common properties
+            if (typeof res.data === 'string') return resolve(res.data);
+            if (typeof res.html === 'string') return resolve(res.html);
+            try { return resolve(JSON.stringify(res)); } catch (e) { return resolve(''); }
+          }
+          resolve('');
+        }, function(a, c) {
+          reject(new Error('Network error'));
+        }, opts.params || {});
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  // Fallback to browser fetch (will be blocked by CORS if remote doesn't allow it)
   const res = await fetch(url, opts);
   if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
   return await res.text();
