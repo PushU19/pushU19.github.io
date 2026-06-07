@@ -59,7 +59,7 @@
                 else Lampa.Noty.show('No card data');
               });
             } catch (ee) {}
-          }, 150);
+          }, 350);
         });
       } catch (e) {}
     },
