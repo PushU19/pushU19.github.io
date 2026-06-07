@@ -65,7 +65,7 @@ async function hd_searchByName(name) {
       candidates.push({href, text: name});
     }
   }
-
+  console.log('HDRezka', 'candidates', candidates);
   return candidates.map(c => c.href);
 }
 
@@ -133,8 +133,23 @@ async function hd_resolveMovieByName(name) {
   var fullData = {};
   function startPlugin(){
     if (typeof Lampa === 'undefined' || !Lampa.Listener) return;
-    Lampa.Listener.follow('full', function (e) { if (e.type == 'complite') { fullData = e; try{ window.hdrezka_full = fullData; }catch(e){} console.log('[HDRezka] full captured'); } });
-    try{ if (window && window.hdrezka) window.hdrezka.getFullData = function(){ return fullData; }; }catch(e){}
+    Lampa.Listener.follow('full', function (e) { 
+        if (e.type == 'complite') { 
+            fullData = e; 
+            try{ 
+                window.hdrezka_full = fullData; 
+            } catch(e){} 
+            console.log('[HDRezka] full captured'); 
+        } 
+    });
+    try { 
+        if (window && window.hdrezka) window.hdrezka.getFullData = function(){ return fullData; }; 
+    } catch(e) {}
   }
-  if (window && window.appready) startPlugin(); else if (typeof Lampa !== 'undefined' && Lampa.Listener) startPlugin(); else if (typeof Lampa !== 'undefined') Lampa.Listener.follow('app', function(ev){ if (ev.type=='ready') startPlugin(); }); else if (document && document.addEventListener) document.addEventListener('DOMContentLoaded', startPlugin);
+  if (window && window.appready) startPlugin(); 
+  else if (typeof Lampa !== 'undefined' && Lampa.Listener) startPlugin(); 
+    else if (typeof Lampa !== 'undefined') Lampa.Listener.follow('app', function(ev){ 
+        if (ev.type=='ready') startPlugin(); 
+}); 
+else if (document && document.addEventListener) document.addEventListener('DOMContentLoaded', startPlugin);
 })();
