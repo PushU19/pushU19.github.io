@@ -49,7 +49,7 @@
               var btnEl = activity.find('.view--hdrezka_online');
               console.log(PLUGIN_ID, 'inject_button', { inserted: !!btnEl.length, e });
               btnEl.on('hover:enter', function () {
-                var c = HdrezkaPlugin.getActiveCard(e);
+                var c = HdrezkaPlugin.getActiveCard(e.data);
                 console.log(PLUGIN_ID, 'play_button_clicked', { card: c });
                 if (c) HdrezkaPlugin.searchCard(c);
                 else Lampa.Noty.show('Фильмы не найдены');
