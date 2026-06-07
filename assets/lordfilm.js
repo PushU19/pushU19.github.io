@@ -59,14 +59,14 @@ function extractSourcesFromHtml(html) {
   if (ifr) urls.push(ifr[1]);
 
   // JSON-like file: 'file':'https://...'
-  const fileRe = /file\s*["']?\s*[:=]\s*["'](https?:\\?/\\?[^"'\\s]+)["']/gi;
+  const fileRe = /file\s*["']?\s*[:=]\s*["'](https?:\/\/[^"'\\s]+)["']/gi;
   let m;
   while ((m = fileRe.exec(html)) !== null) {
     urls.push(m[1].replace(/\\/g, ''));
   }
 
   // direct links to .m3u8/.mp4/webm
-  const directRe = /(https?:\\/\\/[^"'<>\s]+\.(?:m3u8|mp4|webm)(?:\?[^"'\s<>]*)?)/gi;
+  const directRe = /(https?:\/\/[^"'<>\\s]+\.(?:m3u8|mp4|webm)(?:\?[^"'\\s<>]*)?)/gi;
   while ((m = directRe.exec(html)) !== null) {
     urls.push(m[1]);
   }
