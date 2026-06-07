@@ -30,9 +30,7 @@
         }
 
         // Inject play button into full film card when opened
-        Lampa.Listener.follow('activity', function (e) {
-          if (e.component !== 'full') return;
-          if (e.type !== 'create' && e.type !== 'start') return;
+        Lampa.Listener.follow('full', function (e) {
           if (e.type === 'complite') {
           //setTimeout(function () {
             try {
