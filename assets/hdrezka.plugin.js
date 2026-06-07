@@ -19,6 +19,38 @@
           });
           btn.addClass('hdrezka_plugin');
         }
+
+        // Inject play button into full film card when opened
+        Lampa.Listener.follow('activity', function (e) {
+          if (e.component !== 'full') return;
+          if (e.type !== 'create' && e.type !== 'start') return;
+          setTimeout(function () {
+            try {
+              var activity = Lampa.Activity.active().activity.render();
+              if (!activity || activity.find('.view--hdrezka_online').length) return;
+
+              var card = HdrezkaPlugin.getActiveCard();
+              var ico = '<svg class="hd-online-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M17 14.5 21.2 10 4.9 1.2z" fill="currentColor"/></svg>';
+              var btnHtml = "<div style='position:relative' class='full-start__button selector view--hdrezka_online'>" + ico + "<span>HDRezka / VeoVeo</span></div>";
+
+              // Prefer existing button container
+              if (activity.find('.full-start-new__buttons').length) {
+                activity.find('.full-start-new__buttons').prepend($(btnHtml));
+              } else if (activity.find('.full-start__buttons').length) {
+                activity.find('.full-start__buttons').first().append($(btnHtml));
+              } else {
+                activity.find('.view--torrent').first().before($(btnHtml));
+              }
+
+              var btnEl = activity.find('.view--hdrezka_online');
+              btnEl.on('hover:enter', function () {
+                var c = HdrezkaPlugin.getActiveCard() || card;
+                if (c) HdrezkaPlugin.searchCard(c);
+                else Lampa.Noty.show('No card data');
+              });
+            } catch (ee) {}
+          }, 150);
+        });
       } catch (e) {}
     },
 
