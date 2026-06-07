@@ -33,7 +33,7 @@
         Lampa.Listener.follow('activity', function (e) {
           if (e.component !== 'full') return;
           if (e.type !== 'create' && e.type !== 'start') return;
-          if (e.type === 'complete') {
+          if (e.type === 'complite') {
           //setTimeout(function () {
             try {
               var activity = Lampa.Activity.active().activity.render();
