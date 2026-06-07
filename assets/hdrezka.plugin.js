@@ -33,8 +33,8 @@
         Lampa.Listener.follow('activity', function (e) {
           if (e.component !== 'full') return;
           if (e.type !== 'create' && e.type !== 'start') return;
-    
-          setTimeout(function () {
+          if (e.type === 'complete') {
+          //setTimeout(function () {
             try {
               var activity = Lampa.Activity.active().activity.render();
               console.log(PLUGIN_ID, 'activity_render', activity);
@@ -59,7 +59,8 @@
                 else Lampa.Noty.show('No card data');
               });
             } catch (ee) {}
-          }, 350);
+          //}, 350);
+            }
         });
       } catch (e) {}
     },
