@@ -111,13 +111,15 @@
         if (window && window.open) window.open(urls.hdrezka, '_blank');
       }
 
+      this.searchSource('veoveo', card.title)
+
         // Also attempt to fetch playable sources from both balansers and offer direct play
-        var self = this;
+        /*var self = this;
         var fetches = Object.keys(urls).map(function (k) {
           return self.fetchSourcesFromBalancer(k, urls[k], card);
-        });
+        });*/
 
-        Promise.all(fetches).then(function (results) {
+        /*Promise.all(fetches).then(function (results) {
           var all = [];
           results.forEach(function (r) {
             if (r && r.length) all = all.concat(r);
@@ -159,7 +161,7 @@
           }
         })["catch"](function (e) {
           console.log(PLUGIN_ID, 'fetch_sources_error', e);
-        });
+        });*/
     },
 
     searchSource: async function (balanser, title) {
