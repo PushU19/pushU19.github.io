@@ -206,14 +206,25 @@
     fetchHTML: function (url) {
         return new Promise(function (resolve, reject) {
           try {
-            var network = new Lampa.Reguest();
-            network.timeout(10000);
+            var network = new Lampa.Reguest({
+                url: 'http://your_parser_or_api_endpoint',
+                dataType: 'html',
+                success: function(data) {
+                    // Handle successful response
+                    console.log('Results found:', data);
+                },
+                error: function(xhr, errorType) {
+                    // Handle errors
+                    console.log('Request failed:', errorType);
+                }
+            });
+            /*network.timeout(10000);
             network["native"](url, function (html) {
                 console.log(PLUGIN_ID, html)
               try {
                 resolve(html);
               } catch (e) { console.log(PLUGIN_ID, e); reject(e); }
-            });
+            });*/
           } catch (e) { console.log(PLUGIN_ID, e); reject(e); }
         });
     },
